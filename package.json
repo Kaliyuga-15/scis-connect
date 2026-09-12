@@ -1,0 +1,30 @@
+{
+  "name": "scis-connect",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SCIS Connect competition platform - Quiz Mania + Backtracking Arena on one Next.js/Socket.IO server",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js",
+    "lint": "next lint",
+    "seed:quiz": "node scripts/seedQuiz.js",
+    "seed:problems": "node scripts/seedProblems.js",
+    "test:judge": "node scripts/testJudge.js"
+  },
+  "dependencies": {
+    "mongoose": "^8.9.3",
+    "next": "^15.5.4",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
+    "eslint": "^9.36.0",
+    "eslint-config-next": "^15.5.4",
+    "tailwindcss": "^4.3.0"
+  }
+}
