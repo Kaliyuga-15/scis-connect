@@ -7,5 +7,6 @@ export const dynamic = 'force-dynamic';
 export const GET = withErrors(async (request) => {
   await connectDB();
   const key = request.nextUrl.searchParams.get('key') ?? DEFAULT_CONTEST_KEY;
-  return ok(await leaderboardFor(key));
+  const batch = request.nextUrl.searchParams.get('batch') ?? null;
+  return ok(await leaderboardFor(key, batch));
 });

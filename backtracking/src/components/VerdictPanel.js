@@ -62,9 +62,10 @@ export default function VerdictPanel({ submission, pending }) {
   }
 
   const tone = VERDICT_TONE[submission.verdict] ?? VERDICT_TONE[VERDICT.INTERNAL_ERROR];
+  const isAccepted = submission.verdict === VERDICT.ACCEPTED;
 
   return (
-    <div className="space-y-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <div className={`space-y-3 rounded-xl border border-white/10 bg-white/5 p-4 ${isAccepted ? 'verdict-accepted' : ''}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className={`rounded-full border px-3 py-1 text-sm font-medium ${tone}`}>
           {VERDICT_LABEL[submission.verdict] ?? submission.verdict}

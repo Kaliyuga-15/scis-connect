@@ -6,12 +6,13 @@ import { useRef, useState } from 'react';
 // megabytes to a page that ~100 people load at once on contest wifi, and for
 // 30 lines of C the only editor affordances that matter are tab handling and
 // auto-indent, both of which are handled below.
-export default function CodeEditor({ value, onChange, disabled }) {
+export default function CodeEditor({ value, onChange, disabled, problem = {} }) {
   const textareaRef = useRef(null);
   const gutterRef = useRef(null);
   const [cursor, setCursor] = useState({ line: 1, column: 1 });
 
   const lineCount = Math.max(value.split('\n').length, 1);
+  const isFunctionMode = problem?.useFunctionMode ?? false;
 
   const syncScroll = (event) => {
     if (gutterRef.current) gutterRef.current.scrollTop = event.target.scrollTop;
@@ -59,6 +60,20 @@ export default function CodeEditor({ value, onChange, disabled }) {
 
   return (
     <div className="overflow-hidden rounded-xl border border-white/10 bg-[#0d1224]">
+      {/* Function mode header: show read-only signature + includes info */}
+      {isFunctionMode && (
+        <div className="border-b border-white/10 bg-indigo-500/5 px-4 py-2">
+          <p className="text-[10px] uppercase tracking-wider text-indigo-300/50">Function Mode</p>
+          <p className="mono mt-0.5 text-xs text-white/40">
+            You may add <span className="text-cyan-300/60">#include</span> directives and helper functions above your function.
+            A hidden <span className="text-cyan-300/60">main()</span> will read input and call your function.
+          </p>
+          <p className="mono mt-1 text-xs text-indigo-300/80">
+            Signature: <span className="text-white/70">{problem.functionSignature || `void ${problem.functionName || 'solve'}(...)`}</span>
+          </p>
+        </div>
+      )}
+
       <div className="flex h-[26rem]">
         <div
           ref={gutterRef}
@@ -91,7 +106,14 @@ export default function CodeEditor({ value, onChange, disabled }) {
       </div>
 
       <div className="flex items-center justify-between border-t border-white/10 bg-white/[0.03] px-4 py-2 text-xs text-white/40">
-        <span>C (gcc -O2 -std=c11)</span>
+        <div className="flex items-center gap-3">
+          <span>C (gcc -O2 -std=c11)</span>
+          {isFunctionMode && (
+            <span className="rounded-full bg-indigo-500/10 px-2 py-0.5 text-indigo-300/60">
+              func mode
+            </span>
+          )}
+        </div>
         <span className="mono tabular-nums">
           Ln {cursor.line}, Col {cursor.column}
         </span>

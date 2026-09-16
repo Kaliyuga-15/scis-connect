@@ -12,7 +12,7 @@ export default async function ProblemPage({ params }) {
   await connectDB();
 
   const problem = await Problem.findOne({ slug, status: PROBLEM_STATUS.PUBLISHED })
-    .select('slug title order statement hint starterCode samples points timeLimitMs memoryMb')
+    .select('slug title order difficulty statement hint starterCode samples points timeLimitMs memoryMb inputSpec argCount functionName functionSignature returnType useFunctionMode maxProbes probeCooldownMs exampleInputs exampleOutputs')
     .lean();
 
   if (!problem) notFound();

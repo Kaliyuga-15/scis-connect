@@ -5,18 +5,20 @@
   --surface: #121933;
   --foreground: #e8ecf8;
   --accent: #6366f1;
+  --terminal-green: #22c55e;
+  --terminal-bg: #0a0e14;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 /* Arena editor and I/O blocks share one mono stack so a sample and the
    contestant's output line up character for character. */
 .mono {
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
   font-variant-ligatures: none;
   tab-size: 4;
 }
@@ -39,4 +41,210 @@ textarea.editor {
 }
 .scroll-thin::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* === TERMINAL ANIMATIONS === */
+
+/* Blinking cursor for terminal prompt */
+@keyframes terminal-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.terminal-blink {
+  animation: terminal-blink 1s step-end infinite;
+}
+
+/* Terminal prompt pulse */
+.terminal-prompt {
+  text-shadow: 0 0 8px rgb(34 197 94 / 0.4);
+}
+
+/* Terminal entry fade-in */
+@keyframes terminal-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.terminal-entry {
+  animation: terminal-fadein 0.2s ease-out;
+}
+
+/* Terminal output typewriter glow */
+.terminal-output {
+  text-shadow: 0 0 3px rgb(255 255 255 / 0.05);
+}
+
+/* Terminal container subtle glow */
+.terminal-container {
+  box-shadow: 0 0 20px rgb(34 197 94 / 0.05), inset 0 1px 0 rgb(34 197 94 / 0.1);
+}
+
+/* === LEADERBOARD RANK EFFECTS === */
+
+@keyframes glow-gold {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgb(255 215 0 / 0.15); }
+  50% { box-shadow: inset 0 0 0 1px rgb(255 215 0 / 0.25); }
+}
+
+@keyframes glow-silver {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgb(192 192 192 / 0.1); }
+  50% { box-shadow: inset 0 0 0 1px rgb(192 192 192 / 0.2); }
+}
+
+@keyframes glow-bronze {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgb(205 127 50 / 0.1); }
+  50% { box-shadow: inset 0 0 0 1px rgb(205 127 50 / 0.2); }
+}
+
+.leaderboard-gold {
+  background: linear-gradient(90deg, rgb(255 215 0 / 0.05) 0%, transparent 40%);
+  animation: glow-gold 3s ease-in-out infinite;
+}
+
+.leaderboard-silver {
+  background: linear-gradient(90deg, rgb(192 192 192 / 0.03) 0%, transparent 40%);
+  animation: glow-silver 3s ease-in-out infinite;
+}
+
+.leaderboard-bronze {
+  background: linear-gradient(90deg, rgb(205 127 50 / 0.03) 0%, transparent 40%);
+  animation: glow-bronze 3s ease-in-out infinite;
+}
+
+/* === SCORE PULSE ANIMATION === */
+
+@keyframes score-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.score-pulse {
+  animation: score-pulse 0.4s ease-out;
+}
+
+/* === ACCEPTED CELEBRATION === */
+
+@keyframes confetti-burst {
+  0% { opacity: 1; transform: scale(0.5) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+  100% { opacity: 0; transform: scale(1.5) rotate(360deg); }
+}
+
+@keyframes accepted-glow {
+  0% { box-shadow: 0 0 0 0 rgb(34 197 94 / 0.4); }
+  50% { box-shadow: 0 0 20px 4px rgb(34 197 94 / 0.2); }
+  100% { box-shadow: 0 0 0 0 rgb(34 197 94 / 0); }
+}
+
+.verdict-accepted {
+  animation: accepted-glow 1.5s ease-out;
+}
+
+/* === SUBMIT BUTTON === */
+
+.submit-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.1) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+
+.submit-btn:hover:not(:disabled)::after {
+  transform: translateX(100%);
+}
+
+/* === DIFFICULTY BADGE GRADIENTS === */
+
+.difficulty-easy {
+  border-image: linear-gradient(135deg, rgb(34 197 94 / 0.4), rgb(34 197 94 / 0.1)) 1;
+}
+
+.difficulty-medium {
+  border-image: linear-gradient(135deg, rgb(245 158 11 / 0.4), rgb(245 158 11 / 0.1)) 1;
+}
+
+.difficulty-hard {
+  border-image: linear-gradient(135deg, rgb(239 68 68 / 0.4), rgb(239 68 68 / 0.1)) 1;
+}
+
+/* === GLASSMORPHISM CARDS === */
+
+.glass-card {
+  background: rgb(255 255 255 / 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgb(255 255 255 / 0.08);
+}
+
+/* === CARD STAGGER ENTRANCE === */
+
+@keyframes card-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-enter {
+  animation: card-entrance 0.3s ease-out both;
+}
+
+/* Staggered delays for problem cards */
+.card-enter:nth-child(1) { animation-delay: 0ms; }
+.card-enter:nth-child(2) { animation-delay: 60ms; }
+.card-enter:nth-child(3) { animation-delay: 120ms; }
+.card-enter:nth-child(4) { animation-delay: 180ms; }
+.card-enter:nth-child(5) { animation-delay: 240ms; }
+.card-enter:nth-child(6) { animation-delay: 300ms; }
+
+/* === LIVE INDICATOR PULSE === */
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: live-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 6px rgb(34 197 94 / 0.5);
+}
+
+/* === SMOOTH PAGE TRANSITIONS === */
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  animation: page-enter 0.3s ease-out;
 }

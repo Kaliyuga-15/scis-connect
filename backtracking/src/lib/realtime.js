@@ -11,6 +11,7 @@ export const setArenaNamespace = (namespace) => {
 export const arenaNamespace = () => globalThis.__arenaNamespace ?? null;
 
 export const contestRoom = (contestKey) => `contest:${contestKey}`;
+export const batchRoom = (contestKey, batch) => `contest:${contestKey}:batch:${batch}`;
 
 const throttle = globalThis.__arenaBroadcastThrottle ?? { timers: new Map(), pending: new Map() };
 globalThis.__arenaBroadcastThrottle = throttle;
@@ -21,18 +22,31 @@ const BROADCAST_INTERVAL_MS = 1500;
 // otherwise trigger a full leaderboard recompute and fan-out. Collapsing them
 // into at most one broadcast per interval keeps the standings live without
 // melting the database.
-export const broadcastLeaderboard = (contestKey) => {
+export const broadcastLeaderboard = (contestKey, batch = null) => {
   if (!arenaNamespace()) return;
 
-  if (throttle.timers.has(contestKey)) {
-    throttle.pending.set(contestKey, true);
+  const throttleKey = batch ? `${contestKey}:${batch}` : contestKey;
+
+  if (throttle.timers.has(throttleKey)) {
+    throttle.pending.set(throttleKey, true);
     return;
   }
 
   const emit = async () => {
     try {
-      const rows = await leaderboardFor(contestKey);
-      arenaNamespace()?.to(contestRoom(contestKey)).emit(ARENA_SOCKET_EVENTS.LEADERBOARD_UPDATE, rows);
+      const rows = await leaderboardFor(contestKey, batch);
+      // Broadcast to the contest room (all batches see this)
+      arenaNamespace()?.to(contestRoom(contestKey)).emit(ARENA_SOCKET_EVENTS.LEADERBOARD_UPDATE, {
+        rows,
+        batch: batch || 'default',
+      });
+      // Also broadcast to the batch-specific room if applicable
+      if (batch && batch !== 'default') {
+        arenaNamespace()?.to(batchRoom(contestKey, batch)).emit(ARENA_SOCKET_EVENTS.LEADERBOARD_UPDATE, {
+          rows,
+          batch,
+        });
+      }
     } catch (err) {
       console.error('[arena realtime] leaderboard broadcast failed', err);
     }
@@ -41,10 +55,10 @@ export const broadcastLeaderboard = (contestKey) => {
   emit();
 
   throttle.timers.set(
-    contestKey,
+    throttleKey,
     setTimeout(() => {
-      throttle.timers.delete(contestKey);
-      if (throttle.pending.delete(contestKey)) broadcastLeaderboard(contestKey);
+      throttle.timers.delete(throttleKey);
+      if (throttle.pending.delete(throttleKey)) broadcastLeaderboard(contestKey, batch);
     }, BROADCAST_INTERVAL_MS)
   );
 };

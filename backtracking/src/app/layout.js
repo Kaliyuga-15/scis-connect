@@ -3,13 +3,22 @@ import Link from 'next/link';
 import IdentityBadge from '@/components/IdentityBadge';
 
 export const metadata = {
-  title: 'SCIS Connect',
-  description: 'Quiz Mania and Backtracking Arena for the SCIS Connect competition',
+  title: 'Backtracking Arena | SCIS Connect',
+  description:
+    'Interactive black-box pattern deduction contest. Probe the hidden program, infer the logic, and write the C code that replicates it.',
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-screen antialiased">
         <header className="border-b border-white/10 px-6 py-4">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
